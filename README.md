@@ -512,4 +512,57 @@ Le fichier `persistence.xml` sera le suivant :
 </persistence>
 ```
 ##Configuration de DBUnit
+DBUnit est le complément à JUnit qui va nous permettre de maitriser le remplissage ainsi que le netoyage 
+de la base de données entre les différents tests. La première chose à faire pour l'utiliser est de rajouter 
+les dépendances suivantes dans le fichier `pom.xml` :
+```XML
+<dependency>
+    <groupId>org.dbunit</groupId>
+    <artifactId>dbunit</artifactId>
+    <version>2.4.9</version>
+    <scope>test</scope>
+</dependency>
+```
+
+Les jeux d'essais qui seront utilisés pour remplir la base de données sont des fichiers XML qu'il 
+faudra placer dans le dossier des ressources de test : `src/test/resources/`. Pour tester notre DAO, 
+nous utiliserons le jeu d'essai suivant :
+```XML
+<dataset>
+    <table name="POKEMON">
+        <column>NAME</column>
+        <column>TYPE1</column>
+        <column>TYPE2</column>
+        <column>BASEHP</column>
+        <column>ATTACK</column>
+        <column>DEFENSE</column>
+        <column>ATTACKSPECIAL</column>
+        <column>DEFENCESPECIAL</column>
+        <column>SPEED</column>
+        <row>
+            <value>Pikachu</value>
+            <value>ELECTRIC</value>
+            <null/>
+            <value>35</value>
+            <value>55</value>
+            <value>30</value>
+            <value>50</value>
+            <value>40</value>
+            <value>90</value>
+        </row>
+        <row>
+            <value>Rattata</value>
+            <value>NORMAL</value>
+            <null/>
+            <value>30</value>
+            <value>56</value>
+            <value>35</value>
+            <value>25</value>
+            <value>35</value>
+            <value>72</value>
+        </row>
+    </table>
+</dataset>
+```
+
 
