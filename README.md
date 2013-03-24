@@ -437,7 +437,7 @@ Le fichier`POM` de notre projet est le suivant :
 A ce point de ce tutoriel nous avons une application JPA tout à fait classique 
 comme nous en avons déjà crée pendant les TP JPA (https://github.com/nedseb/TpJPA et 
 https://github.com/nedseb/SqueletteTpJPA). Pour vérifier que notre projet a été correctement 
-crée et configuré nous ajoutons la classe suivante qui contient une méthode `main` :
+crée et configuré nous ajoutons la classe suivante qui contient une méthode `public static void main(String[] args)` :
 ```Java
 package fr.univaix.iut.progbd;
 
@@ -466,5 +466,50 @@ public class Main {
     }
 }
 ```
+##Configuration de Derby
+Pour que notre suite de test utilise une base de données différente de celle de notre programme principal, 
+il utiliser la notion de `scope` de Maven. Toutes les dépendances à Derby devront donc comporter la balise 
+`<scope>test</scope>`. Ainsi ces dépendances ne seront accessible uniquement aux classes situées dans le 
+dossier `/src/test/`. Les dépendances à rajouter à notre fichier `pom.xml` sont les suivantes : 
+```XML
+<dependency>
+  <groupId>org.apache.derby</groupId>
+  <artifactId>derby</artifactId>
+  <version>10.9.1.0</version>
+  <scope>test</scope>
+</dependency>   
+<dependency>
+  <groupId>org.apache.derby</groupId>
+  <artifactId>derbyclient</artifactId>
+  <version>10.9.1.0</version>
+  <scope>test</scope>
+</dependency>
+```
+De même que les dépendances, il nous faut un fichier de configuration propre à notre suite de test. Pour se faire 
+il suffit de créer un nouveau fichier `persistence.xml` que l'on placera dans le dossier `/src/test/resources/META-INF`.
+Pour satisfaire notre besoin il faut utiliser le connecteur JDBC embarqué `org.apache.derby.jdbc.EmbeddedDriver` en même 
+temps qu'une URL de connection spécifiant que l'on utilise une BD qui résidera en mémoire (`jdbc:derby:memory`). 
+Le fichier `persistence.xml` sera le suivant :
+```XML
+<?xml version="1.0" encoding="UTF-8" ?>
 
+<persistence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+             version="2.0" xmlns="http://java.sun.com/xml/ns/persistence">
+  <persistence-unit name="pokebattlePU" transaction-type="RESOURCE_LOCAL">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <class>fr.univaix.iut.progbd.Pokemon</class>
+    <properties>
+        <property name="eclipselink.target-database" value="Derby" />
+        <property name="javax.persistence.jdbc.driver" value="org.apache.derby.jdbc.EmbeddedDriver" />
+        <property name="javax.persistence.jdbc.url" value="jdbc:derby:memory:PokemonDB;create=true" />
+        <property name="javax.persistence.jdbc.user" value="" />
+        <property name="javax.persistence.jdbc.password" value="" />
+        <property name="eclipselink.logging.level" value="INFO" />
+        <property name="eclipselink.ddl-generation"  value="create-tables"/>
+    </properties>
+  </persistence-unit>
+</persistence>
+```
+##Configuration de DBUnit
 
