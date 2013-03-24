@@ -565,4 +565,4 @@ nous utiliserons le jeu d'essai suivant :
 </dataset>
 ```
 
-
+##Écriture du test pour la classe `DAOPokemonJPA`
