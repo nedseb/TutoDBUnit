@@ -1,5 +1,14 @@
 *.class
-
+.idea/
+*.iml
+*.log
+target/
+.settings
+.metadata/
+.cache
+.classpath
+.classpath.txt
+.project
 # Package Files #
 *.jar
 *.war
