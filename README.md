@@ -1,4 +1,5 @@
-#TutoDBUnit
+#TutoDBUnit[![Build Status](https://travis-ci.org/nedseb/TutoDBUnit.png?branch=master)](https://travis-ci.org/nedseb/TutoDBUnit/)
+
 
 Ce tutoriel présente une manière de mettre en place des tests unitaires 
 pour les entités et les DAO d'une couche de persistance construite avec JPA.
