@@ -3,13 +3,13 @@
 Ce tutoriel présente une manière de mettre en place des tests unitaires 
 pour les entités et les DAO d'une couche de persistance construite avec JPA.
 
-Le test unitaire d'une classe de la couche de persistance differe de celui 
+Le test unitaire d'une classe de la couche de persistance diffère de celui 
 d'une classe classique. Les objets de ces classes ont besoin d'interagir avec 
 le SGBD-R. Le SGBD étant généralement un serveur externe à notre application, 
 il faudrait donc que le poste du développeur ait accès à ce serveur. Cette 
 dépendance à un programme externe est contraire au principe FIRST (Fast, 
 Independant, Repeteable, Self-Verifying, Timely). Le risque de conserver 
-cette dépendance dans l'environement de test est que tous les développeurs 
+cette dépendance dans l'environnement de test est que tous les développeurs 
 ne pourront pas nécéssairement lancer la suite de test régulièrement. En 
 plus pour que les tests soient répétables, il faudrait réinitialiser l'état 
 de la base avant chaque méthode de test.
@@ -20,8 +20,8 @@ en Java. Étant multi-plateforme de petite taille(2Mo), ce moteur peut
 facilement être intégré directement au sein d'une application Java. L'un des 
 modes de fonctionnement de cette base de données est purement en mémoire. Ainsi 
 la base aura la même durée de vie que le programme. Ce mode de fonctionnement 
-est particulièrement intéréssant dans le cas des tests unitaires car il élimine 
-le besoin d'un serveur externe et qu'il permet une maitrise totale des données.
+est particulièrement intéressant dans le cas des tests unitaires car il élimine 
+le besoin d'un serveur externe et qu'il permet une maîtrise totale des données.
 
 Le second outil que l'on va utiliser sera DBUnit (http://www.dbunit.org/). Cet 
 outil est un complément à JUnit pour les projets centrés sur une Base de données.
@@ -40,21 +40,20 @@ import javax.persistence.*;
 
 @Entity
 @NamedQueries({
-   @NamedQuery(name = Pokemon.FIND_ALL, query = "SELECT p FROM Pokemon p"),
-   @NamedQuery(name = Pokemon.FIND_BY_TYPE, query = "SELECT p FROM Pokemon p WHERE p.name = :ftype"),
+        @NamedQuery(name = Pokemon.FIND_ALL, query = "SELECT p FROM Pokemon p"),
+        @NamedQuery(name = Pokemon.FIND_BY_TYPE, query = "SELECT p FROM Pokemon p WHERE p.type1 = :ftype")
 })
 public class Pokemon {
     public static final String FIND_BY_TYPE = "findPokemonByType";
     public static final String FIND_ALL = "findAllPokemon";
-    
     @Id
     private String name;
 
     @Enumerated(EnumType.STRING)
-    private Type types1;
+    private Type type1;
 
     @Enumerated(EnumType.STRING)
-    private Type types2;
+    private Type type2;
 
     private int baseHP;
     private int attack;
@@ -63,7 +62,7 @@ public class Pokemon {
     private int defenseSpecial;
     private int speed;
 
-    protected Pokemon(){
+    protected Pokemon() {
 
     }
 
@@ -75,24 +74,20 @@ public class Pokemon {
         return name;
     }
 
-    private void setName(String name) {
-        this.name = name;
+    public Type getType1() {
+        return type1;
     }
 
-    public Type getTypes1() {
-        return types1;
+    public void setType1(Type types1) {
+        this.type1 = types1;
     }
 
-    public void setTypes1(Type types1) {
-        this.types1 = types1;
+    public Type getType2() {
+        return type2;
     }
 
-    public Type getTypes2() {
-        return types2;
-    }
-
-    public void setTypes2(Type types2) {
-        this.types2 = types2;
+    public void setType2(Type types2) {
+        this.type2 = types2;
     }
 
     public int getBaseHP() {
@@ -157,8 +152,8 @@ public class Pokemon {
         if (defenseSpecial != pokemon.defenseSpecial) return false;
         if (speed != pokemon.speed) return false;
         if (name != null ? !name.equals(pokemon.name) : pokemon.name != null) return false;
-        if (types1 != pokemon.types1) return false;
-        if (types2 != pokemon.types2) return false;
+        if (type1 != pokemon.type1) return false;
+        if (type2 != pokemon.type2) return false;
 
         return true;
     }
@@ -166,8 +161,8 @@ public class Pokemon {
     @Override
     public int hashCode() {
         int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (types1 != null ? types1.hashCode() : 0);
-        result = 31 * result + (types2 != null ? types2.hashCode() : 0);
+        result = 31 * result + (type1 != null ? type1.hashCode() : 0);
+        result = 31 * result + (type2 != null ? type2.hashCode() : 0);
         result = 31 * result + baseHP;
         result = 31 * result + attack;
         result = 31 * result + defense;
@@ -181,8 +176,8 @@ public class Pokemon {
     public String toString() {
         return "Pokemon{" +
                 "name='" + name + '\'' +
-                ", types1=" + types1 +
-                ", types2=" + types2 +
+                ", types1=" + type1 +
+                ", types2=" + type2 +
                 ", baseHP=" + baseHP +
                 ", attack=" + attack +
                 ", defense=" + defense +
@@ -192,6 +187,7 @@ public class Pokemon {
                 '}';
     }
 }
+
 ```
 En plus de cette entité nous avons aussi besoin d'une énumeration `Type` qui décrit les types des pokémons :
 ```Java
@@ -238,7 +234,7 @@ public interface DAO<T, ID> {
      *
      * @return
      */
-    public List<T> FindAll();
+    public List<T> findAll();
 
     /**
      * Permet de récupérer un objet via son ID
@@ -272,7 +268,7 @@ package fr.univaix.iut.progbd;
 import java.util.List;
 
 public interface DAOPokemon extends DAO<Pokemon, String> {
-    public List<Pokemon> FindByType(Type type);
+    public List<Pokemon> findByType(Type type);
 }
 ```
 Et enfin la classe `DAOPokemonJPA` implémentant cette interface en utilisant JPA :
@@ -293,7 +289,7 @@ public class DAOPokemonJPA implements DAOPokemon {
     }
 
     @Override
-    public List<Pokemon> FindByType(Type type) {
+    public List<Pokemon> findByType(Type type) {
         TypedQuery<Pokemon> query = entityManager.createNamedQuery(Pokemon.FIND_BY_TYPE, Pokemon.class);
         query.setParameter("ftype", type);
         return query.getResultList();
@@ -313,7 +309,7 @@ public class DAOPokemonJPA implements DAOPokemon {
     }
 
     @Override
-    public List<Pokemon> FindAll() {
+    public List<Pokemon> findAll() {
         TypedQuery<Pokemon> query = entityManager.createNamedQuery(Pokemon.FIND_ALL, Pokemon.class);
         return query.getResultList();
     }
@@ -362,8 +358,9 @@ Le projet principal utilise MySQL. Pour configurer JPA on utilise le fichier `sr
         <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
         <property name="javax.persistence.jdbc.user"  value="monUser"/>
         <property name="javax.persistence.jdbc.password"  value="monPassword"/>
-        <property name="eclipselink.logging.level" value="INFO" />
-        <property name="eclipselink.ddl-generation"  value="create-tables"/>
+	<property name="eclipselink.ddl-generation.output-mode" value="database"/>
+        <property name="eclipselink.ddl-generation"  value="create-or-extend-tables"/>        
+	<property name="eclipselink.logging.level" value="INFO" />
     </properties>
   </persistence-unit>
 </persistence>
@@ -488,7 +485,7 @@ dossier `/src/test/`. Les dépendances à rajouter à notre fichier `pom.xml` so
 De même que les dépendances, il nous faut un fichier de configuration propre à notre suite de test. Pour se faire 
 il suffit de créer un nouveau fichier `persistence.xml` que l'on placera dans le dossier `/src/test/resources/META-INF`.
 Pour satisfaire notre besoin il faut utiliser le connecteur JDBC embarqué `org.apache.derby.jdbc.EmbeddedDriver` en même 
-temps qu'une URL de connection spécifiant que l'on utilise une BD qui résidera en mémoire (`jdbc:derby:memory`). 
+temps qu'une URL de connexion spécifiant que l'on utilise une BD qui résidera en mémoire (`jdbc:derby:memory`). 
 Le fichier `persistence.xml` sera le suivant :
 ```XML
 <?xml version="1.0" encoding="UTF-8" ?>
@@ -506,13 +503,14 @@ Le fichier `persistence.xml` sera le suivant :
         <property name="javax.persistence.jdbc.user" value="" />
         <property name="javax.persistence.jdbc.password" value="" />
         <property name="eclipselink.logging.level" value="INFO" />
+        <property name="eclipselink.ddl-generation.output-mode" value="database"/>
         <property name="eclipselink.ddl-generation"  value="create-tables"/>
     </properties>
   </persistence-unit>
 </persistence>
 ```
 ##Configuration de DBUnit
-DBUnit est le complément à JUnit qui va nous permettre de maitriser le remplissage ainsi que le netoyage 
+DBUnit est le complément à JUnit qui va nous permettre de maîtriser le remplissage ainsi que le nettoyage 
 de la base de données entre les différents tests. La première chose à faire pour l'utiliser est de rajouter 
 les dépendances suivantes dans le fichier `pom.xml` :
 ```XML
@@ -529,40 +527,159 @@ faudra placer dans le dossier des ressources de test : `src/test/resources/`. Po
 nous utiliserons le jeu d'essai suivant :
 ```XML
 <dataset>
-    <table name="POKEMON">
-        <column>NAME</column>
-        <column>TYPE1</column>
-        <column>TYPE2</column>
-        <column>BASEHP</column>
-        <column>ATTACK</column>
-        <column>DEFENSE</column>
-        <column>ATTACKSPECIAL</column>
-        <column>DEFENCESPECIAL</column>
-        <column>SPEED</column>
-        <row>
-            <value>Pikachu</value>
-            <value>ELECTRIC</value>
-            <null/>
-            <value>35</value>
-            <value>55</value>
-            <value>30</value>
-            <value>50</value>
-            <value>40</value>
-            <value>90</value>
-        </row>
-        <row>
-            <value>Rattata</value>
-            <value>NORMAL</value>
-            <null/>
-            <value>30</value>
-            <value>56</value>
-            <value>35</value>
-            <value>25</value>
-            <value>35</value>
-            <value>72</value>
-        </row>
-    </table>
+    <POKEMON NAME="Pikachu" TYPE1="ELECTRIC" BASEHP="35" ATTACK="55" DEFENSE="30"
+     ATTACKSPECIAL="50" DEFENSESPECIAL="40" SPEED="90"/>
+    <POKEMON NAME="Rattata" TYPE1="NORMAL" BASEHP="30" ATTACK="56" DEFENSE="35"
+     ATTACKSPECIAL="25" DEFENSESPECIAL="35" SPEED="72"/>
 </dataset>
 ```
 
 ##Écriture du test pour la classe `DAOPokemonJPA`
+Avant d'écrire les méthodes de test de la classe `DAOPokemonJPATest`, nous allons écrire les
+méthodes de configuration de l'environnement de test. La première de ces méthodes va se connecter à la base de
+données et charger le jeu de test. Cette méthode devra être lancée une seule fois avant tous les tests.
+Elle sera donc annoté avec `@BeforeClass` :
+```Java
+@BeforeClass
+public static void initTestFixture() throws Exception {
+    // Get the entity manager for the tests.
+    entityManagerFactory = Persistence.createEntityManagerFactory("pokebattlePU");
+    entityManager = entityManagerFactory.createEntityManager();
+
+    Connection connection = ((EntityManagerImpl) (entityManager.getDelegate())).getServerSession().getAccessor().getConnection();
+
+    dbUnitConnection = new DatabaseConnection(connection);
+    //Loads the data set from a file
+    dataset = new FlatXmlDataSetBuilder().build(Thread.currentThread()
+            .getContextClassLoader()
+            .getResourceAsStream("pokemonDataset.xml"));
+}
+```
+
+La deuxième est celle qui est responsable de nettoyer les ressources une fois que les tests sont tous terminés. 
+Elle sera annoté avec `@AfterClass` :
+@AfterClass
+public static void finishTestFixture() throws Exception {
+    entityManager.close();
+    entityManagerFactory.close();
+
+}
+
+La dernière méthode préparant l'environnement de test va s'occuper de remettre la base de données dans un état 
+prévisible avant chaque test. Cette méthode sera annoté avec `@Before`, tout ce qu'elle fait c'est de vider la BD et d'y 
+réinsérer le jeu d'essai. Ainsi peu importe ce que fait une méthode de test données, les autres méthodes qui suivent 
+ne seront pas affecté par un effet de bord dû à un non indépendance des tests.
+```Java
+@Before
+public void setUp() throws Exception {
+    //Clean the data from previous test and insert new data test.
+    DatabaseOperation.CLEAN_INSERT.execute(dbUnitConnection, dataset);
+}
+```
+
+Maintenant que cette étape est passée, nous allons enfin pouvoir écrire les tests du DAO. Voici la classe 
+`DAOPokemonJPATest` complète :
+```Java
+package fr.univaix.iut.progbd;
+
+import org.dbunit.database.DatabaseConnection;
+import org.dbunit.dataset.xml.FlatXmlDataSet;
+import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
+import org.dbunit.operation.DatabaseOperation;
+import org.eclipse.persistence.internal.jpa.EntityManagerImpl;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import java.sql.Connection;
+import java.util.List;
+
+import static org.fest.assertions.Assertions.assertThat;
+
+public class DAOPokemonJPATest {
+
+    private static EntityManager entityManager;
+    private static FlatXmlDataSet dataset;
+    private static DatabaseConnection dbUnitConnection;
+    private static EntityManagerFactory entityManagerFactory;
+
+    private DAOPokemon dao = new DAOPokemonJPA(entityManager);
+
+    @BeforeClass
+    public static void initTestFixture() throws Exception {
+        // Get the entity manager for the tests.
+        entityManagerFactory = Persistence.createEntityManagerFactory("pokebattlePU");
+        entityManager = entityManagerFactory.createEntityManager();
+
+        Connection connection = ((EntityManagerImpl) (entityManager.getDelegate())).getServerSession().getAccessor().getConnection();
+
+        dbUnitConnection = new DatabaseConnection(connection);
+        //Loads the data set from a file
+        dataset = new FlatXmlDataSetBuilder().build(Thread.currentThread()
+                .getContextClassLoader()
+                .getResourceAsStream("pokemonDataset.xml"));
+    }
+
+    @AfterClass
+    public static void finishTestFixture() throws Exception {
+        entityManager.close();
+        entityManagerFactory.close();
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        //Clean the data from previous test and insert new data test.
+        DatabaseOperation.CLEAN_INSERT.execute(dbUnitConnection, dataset);
+    }
+
+    @Test
+    public void testFindByType() throws Exception {
+        List<Pokemon> pokemons = dao.findByType(Type.ELECTRIC);
+        assertThat(pokemons.get(0).getName()).isEqualTo("Pikachu");
+    }
+
+    @Test
+    public void testFindAll() throws Exception {
+        List<Pokemon> pokemons = dao.findAll();
+        assertThat(pokemons.get(0).getName()).isEqualTo("Pikachu");
+        assertThat(pokemons.get(1).getName()).isEqualTo("Rattata");
+    }
+
+    @Test
+    public void testGetById() throws Exception {
+        assertThat(dao.getById("Pikachu").getName()).isEqualTo("Pikachu");
+        assertThat(dao.getById("Rattata").getName()).isEqualTo("Rattata");
+    }
+
+    @Test
+    public void testDelete() throws Exception {
+        dao.delete(dao.getById("Pikachu"));
+        assertThat(dao.getById("Pikachu")).isNull();
+    }
+
+    @Test
+    public void testInsert() throws Exception {
+        Pokemon raichu = new Pokemon("Raichu");
+        raichu.setType1(Type.ELECTRIC);
+        dao.insert(raichu);
+        assertThat(dao.getById("Raichu").getName()).isEqualTo("Raichu");
+        assertThat(dao.getById("Raichu").getType1()).isEqualTo(Type.ELECTRIC);
+    }
+
+    @Test
+    public void testUpdate() throws Exception {
+        Pokemon pikachu = dao.getById("Pikachu");
+        assertThat(pikachu.getAttack()).isGreaterThan(0);
+        pikachu.setAttack(-1);
+        dao.update(pikachu);
+        assertThat(dao.getById("Pikachu").getAttack()).isLessThan(0);
+    }
+}
+```
+La méthode `findByType` comporte une erreur non exhibée par notre jeu de test. Pour essayer de la mettre en évidence et la corriger,
+rajouter à votre jeu d'essai le pokémon nomé "Lanturn". 
+

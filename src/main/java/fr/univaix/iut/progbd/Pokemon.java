@@ -5,7 +5,7 @@ import javax.persistence.*;
 @Entity
 @NamedQueries({
         @NamedQuery(name = Pokemon.FIND_ALL, query = "SELECT p FROM Pokemon p"),
-        @NamedQuery(name = Pokemon.FIND_BY_TYPE, query = "SELECT p FROM Pokemon p WHERE p.name = :ftype")
+        @NamedQuery(name = Pokemon.FIND_BY_TYPE, query = "SELECT p FROM Pokemon p WHERE p.type1 = :ftype")
 })
 public class Pokemon {
     public static final String FIND_BY_TYPE = "findPokemonByType";
@@ -14,10 +14,10 @@ public class Pokemon {
     private String name;
 
     @Enumerated(EnumType.STRING)
-    private Type types1;
+    private Type type1;
 
     @Enumerated(EnumType.STRING)
-    private Type types2;
+    private Type type2;
 
     private int baseHP;
     private int attack;
@@ -38,20 +38,20 @@ public class Pokemon {
         return name;
     }
 
-    public Type getTypes1() {
-        return types1;
+    public Type getType1() {
+        return type1;
     }
 
-    public void setTypes1(Type types1) {
-        this.types1 = types1;
+    public void setType1(Type types1) {
+        this.type1 = types1;
     }
 
-    public Type getTypes2() {
-        return types2;
+    public Type getType2() {
+        return type2;
     }
 
-    public void setTypes2(Type types2) {
-        this.types2 = types2;
+    public void setType2(Type types2) {
+        this.type2 = types2;
     }
 
     public int getBaseHP() {
@@ -116,8 +116,8 @@ public class Pokemon {
         if (defenseSpecial != pokemon.defenseSpecial) return false;
         if (speed != pokemon.speed) return false;
         if (name != null ? !name.equals(pokemon.name) : pokemon.name != null) return false;
-        if (types1 != pokemon.types1) return false;
-        if (types2 != pokemon.types2) return false;
+        if (type1 != pokemon.type1) return false;
+        if (type2 != pokemon.type2) return false;
 
         return true;
     }
@@ -125,8 +125,8 @@ public class Pokemon {
     @Override
     public int hashCode() {
         int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (types1 != null ? types1.hashCode() : 0);
-        result = 31 * result + (types2 != null ? types2.hashCode() : 0);
+        result = 31 * result + (type1 != null ? type1.hashCode() : 0);
+        result = 31 * result + (type2 != null ? type2.hashCode() : 0);
         result = 31 * result + baseHP;
         result = 31 * result + attack;
         result = 31 * result + defense;
@@ -140,8 +140,8 @@ public class Pokemon {
     public String toString() {
         return "Pokemon{" +
                 "name='" + name + '\'' +
-                ", types1=" + types1 +
-                ", types2=" + types2 +
+                ", types1=" + type1 +
+                ", types2=" + type2 +
                 ", baseHP=" + baseHP +
                 ", attack=" + attack +
                 ", defense=" + defense +

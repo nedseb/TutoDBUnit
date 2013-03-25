@@ -13,7 +13,9 @@
         <property name="javax.persistence.jdbc.user"  value="monUser"/>
         <property name="javax.persistence.jdbc.password"  value="monPassword"/>
         <property name="eclipselink.logging.level" value="INFO" />
-        <property name="eclipselink.ddl-generation"  value="create-tables"/>
+        <property name="eclipselink.ddl-generation.output-mode" value="both"/>
+        <property name="eclipselink.ddl-generation"  value="create-or-extend-tables"/>
+        <property name="eclipselink.deploy-on-startup" value="true" />
     </properties>
   </persistence-unit>
 </persistence>

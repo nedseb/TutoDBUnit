@@ -15,7 +15,7 @@ public class Main {
         em.getTransaction().begin();
 
         Pokemon pikachu = new Pokemon("Pikachu");
-        pikachu.setTypes1(Type.ELECTRIC);
+        pikachu.setType1(Type.ELECTRIC);
         em.persist(pikachu);
 
         em.getTransaction().commit();

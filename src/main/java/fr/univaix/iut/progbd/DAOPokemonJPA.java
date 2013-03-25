@@ -14,7 +14,7 @@ public class DAOPokemonJPA implements DAOPokemon {
     }
 
     @Override
-    public List<Pokemon> FindByType(Type type) {
+    public List<Pokemon> findByType(Type type) {
         TypedQuery<Pokemon> query = entityManager.createNamedQuery(Pokemon.FIND_BY_TYPE, Pokemon.class);
         query.setParameter("ftype", type);
         return query.getResultList();
@@ -34,7 +34,7 @@ public class DAOPokemonJPA implements DAOPokemon {
     }
 
     @Override
-    public List<Pokemon> FindAll() {
+    public List<Pokemon> findAll() {
         TypedQuery<Pokemon> query = entityManager.createNamedQuery(Pokemon.FIND_ALL, Pokemon.class);
         return query.getResultList();
     }

@@ -16,7 +16,7 @@ public interface DAO<T, ID> {
      *
      * @return
      */
-    public List<T> FindAll();
+    public List<T> findAll();
 
     /**
      * Permet de récupérer un objet via son ID
