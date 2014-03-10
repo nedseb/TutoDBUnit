@@ -562,7 +562,7 @@ public static void initTestFixture() throws Exception {
 
 La deuxième est celle qui est responsable de nettoyer les ressources une fois que les tests sont tous terminés. 
 Elle sera annotée avec `@AfterClass` :
-```
+```Java
 @AfterClass
 public static void finishTestFixture() throws Exception {
     entityManager.close();
