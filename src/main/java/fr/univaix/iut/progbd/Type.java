@@ -17,5 +17,8 @@ public enum Type {
     DRAGON,
     GHOST,
     DARK,
-    STEEL
+    STEEL,
+    UNKNOWN,
+    OBSCURE,
+    FAIRY
 }
