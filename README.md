@@ -211,7 +211,10 @@ public enum Type {
     DRAGON,
     GHOST,
     DARK,
-    STEEL
+    STEEL,
+    UNKNOWN,
+    OBSCURE,
+    FAIRY
 }
 ```
 Notre couche métier ne contiendra que cette classe. Écrivons maintenant les DAO de notre couche de persistance.
@@ -558,16 +561,18 @@ public static void initTestFixture() throws Exception {
 ```
 
 La deuxième est celle qui est responsable de nettoyer les ressources une fois que les tests sont tous terminés. 
-Elle sera annoté avec `@AfterClass` :
+Elle sera annotée avec `@AfterClass` :
+```Java
 @AfterClass
 public static void finishTestFixture() throws Exception {
     entityManager.close();
     entityManagerFactory.close();
 
 }
+```
 
 La dernière méthode préparant l'environnement de test va s'occuper de remettre la base de données dans un état 
-prévisible avant chaque test. Cette méthode sera annoté avec `@Before`, tout ce qu'elle fait c'est de vider la BD et d'y 
+prévisible avant chaque test. Cette méthode sera annotée avec `@Before`, tout ce qu'elle fait c'est de vider la BD et d'y 
 réinsérer le jeu d'essai. Ainsi peu importe ce que fait une méthode de test données, les autres méthodes qui suivent 
 ne seront pas affecté par un effet de bord dû à un non indépendance des tests.
 ```Java
