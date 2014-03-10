@@ -572,7 +572,7 @@ public static void finishTestFixture() throws Exception {
 ```
 
 La dernière méthode préparant l'environnement de test va s'occuper de remettre la base de données dans un état 
-prévisible avant chaque test. Cette méthode sera annoté avec `@Before`, tout ce qu'elle fait c'est de vider la BD et d'y 
+prévisible avant chaque test. Cette méthode sera annotée avec `@Before`, tout ce qu'elle fait c'est de vider la BD et d'y 
 réinsérer le jeu d'essai. Ainsi peu importe ce que fait une méthode de test données, les autres méthodes qui suivent 
 ne seront pas affecté par un effet de bord dû à un non indépendance des tests.
 ```Java
